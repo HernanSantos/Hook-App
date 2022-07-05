@@ -1,10 +1,11 @@
-import { useFetch } from "../hooks/useFetch"
-
+import { useCounter, useFetch } from "../hooks";
+import { LoadingQuote } from "./LoadingQuote";
+import { Quote } from "./Quote";
 
 export const MultipleCustomHooks = () => {
 
-    const {data, isLoading, hasError} = useFetch("https://www.breakingbadapi.com/api/quotes/1");
-
+    const {counter,increment} = useCounter();
+    const {data, isLoading, hasError} = useFetch(`https://www.breakingbadapi.com/api/quotes/${counter}`);
     const {author,quote} = !!data && data[0]; //al ser devuelto un array se desestructura de esta forma
 
     return (
@@ -14,19 +15,15 @@ export const MultipleCustomHooks = () => {
 
             {
                 (isLoading)
-                    ? (
-                        <div className="alert alert-info text-center">
-                            Loading...
-                        </div>
-                    )
-                    : (
-                        <blockquote className="blockquote text-end">
-                            <p className="mb-1">{quote}</p>
-                            <footer className="blockquote-footer">{author}</footer>
-                        </blockquote>
-                    )
+                ? <LoadingQuote />
+                : <Quote quote={quote} author={author}/>
             }
-            
+
+            <button 
+                className="btn btn-primary" 
+                onClick={()=>increment()}>
+                Next quote
+            </button>            
         </>
     )
 }
